@@ -16,21 +16,30 @@
 		var width = 960,
 			height = 600;
 		
-		var svg = d3.select("body").append("svg")
-									.attr("width", width)
-									.attr("height", height)
-									.style("border", "1px solid black");
+		
 
-		var force = d3.layout.force()
-				.nodes(nodes)
-				.links(links)
-				.size([width, height])
-				.start();
+
 		
 
 
 		d3.csv("graph_data/edges.csv",function(csv) {
- 
+ 			
+ 			var svg = d3.select("body").append("svg")
+									.attr("width", width)
+									.attr("height", height)
+									.style("border", "1px solid black")
+									.append("table")
+									.selectAll("tr")
+									.data(csv)
+									.enter()
+									.append("tr")
+									;
+
+			var force = d3.layout.force()
+				.nodes(nodes)
+				.links(links)
+				.size([width, height])
+				.start();
 		})
 
 	</script>
