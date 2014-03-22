@@ -21,9 +21,7 @@
 </style>
 
 <body>
-	
 
-=======
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
@@ -55,120 +53,132 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
+		    <h3><a name="a-pattern-language" class="anchor" href="#a-pattern-language"><span class="octicon octicon-link"></span></a>A Pattern Language</h3>
 
-				<script src="http://d3js.org/d3.v3.min.js"></script>
+			<p>Christopher Alexander's 1977 <em>A Pattern Language</em> provided a sequence of vignettes, sketches, concepts - patterns for thinking about architecture and urban design. Each of the patterns builds upon and references others. In Alexander's words:</p>
 
-				<script>
-					var width = 960,
-						height = 600;
-					
-					var svg = d3.select("#main_content").append("svg")
-												.attr("width", width)
-												.attr("height", height)
-												.style("border", "1px solid black");
+			<blockquote>
+			<p>Since the language is in truth a network, there is no one sequence which perfectly captures it. But the sequence which follows, captures the broad sweep of the full network; in doing so, it follows a line, dips down, dips up again, and follows an irregular course, a little like a needle following a tapestry.</p>
+			</blockquote>
 
-					//Set attributes of forced layout fxn
-					var force = d3.layout.force()
-							.charge(-10)		//May want to make this a fxn rather than constant?
-							.linkDistance(50)
-							.size([width, height]);
-					
-					var nodes;
-					var edges;
+			<p>Through this project, I hope to provide a way to step back and view this tapestry as a whole. And learn a bit about d3.js along the way.</p>
+			
+			<script src="http://d3js.org/d3.v3.min.js"></script>
 
-					//Load node data, parse CSV file
-					d3.csv("graph_data/nodes.csv", 
-						function(d) {
-							return {							
-					    		node_id: +d.Node,
-						    	label: d.Label,
-						    	weight: +d.Weight, 
-						    	type: d.Type
-						  	};
-						}, 
-						function(error, rows) {					
-
-					  		nodes = rows;
-					  		
-					  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
-					  		//Load edge data, parse CSV file
-						  	d3.csv("graph_data/edges.csv", 
-						  		function(d) {
-									return {
-								    	source: +d.Source,
-								    	target: +d.Target,
-								    	"weight": 1,
-								    	type: d.Type, 
-							  		};
-								}, 
-								function(error, rows) {
-							  		edges = rows;
-
-									console.log(nodes);
-									console.log(edges);
-
-									force
-									      .nodes(nodes)
-									      .links(edges)
-									      .start();
-
-									//Set attributes of nodes
-									var node = svg.selectAll(".node")
-										.data(nodes)
-										.enter()
-										.append("circle")
-										.attr("class", "node")
-										.attr("r", 5)
-										.style("fill", "steelblue");
-
-									//Add text element
-									node.append("text")
-								      	.attr("dx", 12)
-			      						.attr("dy", ".35em")
-								      	.text("Label");		
-								      	//.text(function(d) {return d.Label });
-
-									//Set attributes of edges
-									var link = svg.selectAll(".link")
-										.data(edges)
-										.enter().append("line")
-										.attr("class", "link")
-										.style("stroke-width", 1)
-										.call(force.drag);
-
-									//Set layout of nodes & edges
-									force.on("tick", function() {
-										link.attr("x1", function (d) {return d.source.x; })
-											.attr("y1", function (d) {return d.source.y; })
-											.attr("x2", function (d) {return d.target.x; })
-											.attr("y2", function (d) {return d.target.y; })
-										node.attr("cx", function(d) { return d.x; })
-											.attr("cy", function(d) { return d.y; });
-									})
-
-									/*For further exploration:
-										- Edge tapering (show direction) http://www.slideshare.net/OReillyStrata/visualizing-networks-beyond-the-hairball
-										- Edge bundling
-										- curved links
-									*/
-
-								}
-							);
-						}
-					);
+			<script>
+				var width = 960,
+					height = 960;
 				
-				</script>
+				var svg = d3.select("#main_content").append("svg")
+											.attr("width", width)
+											.attr("height", height)
+											.style("border", "1px solid black");
 
-        <h3>
-<a name="a-pattern-language" class="anchor" href="#a-pattern-language"><span class="octicon octicon-link"></span></a>A Pattern Language</h3>
+				//Set attributes of forced layout fxn
+				var force = d3.layout.force()
+						.charge(-100)		//May want to make this a fxn rather than constant?
+						.linkDistance(100)
+						.size([width, height]);
+				
+				var nodes;
+				var edges;
+				
 
-<p>Christopher Alexander's 1977 <em>A Pattern Language</em> provided a sequence of vignettes, sketches, concepts - patterns for thinking about architecture and urban design. Each of the patterns builds upon and references others. In Alexander's words:</p>
+				//Load node data, parse CSV file
+				d3.csv("graph_data/nodes.csv", 
+					function(d) {
+						return {							
+				    		node_id: +d.Node,
+					    	label: d.Label,
+					    	importance: +d.Weight, 
+					    	type: d.Type
+					  	};
+					}, 
+					function(error, rows) {					
 
-<blockquote>
-<p>Since the language is in truth a network, there is no one sequence which perfectly captures it. But the sequence which follows, captures the broad sweep of the full network; in doing so, it follows a line, dips down, dips up again, and follows an irregular course, a little like a needle following a tapestry.</p>
-</blockquote>
+				  		nodes = rows;
+				  		
+				  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
+				  		//Load edge data, parse CSV file
+					  	d3.csv("graph_data/edges.csv", 
+					  		function(d) {
+								return {
+							    	source: +d.Source,
+							    	target: +d.Target,
+							    	//"weight": 1,
+							    	type: d.Type, 
+						  		};
+							}, 
+							function(error, rows) {
+						  		edges = rows;
 
-<p>Through this project, I hope to provide a way to step back and view this tapestry as a whole. And learn a bit about d3.js along the way.</p>
+								console.log(nodes);
+								console.log(edges);
+
+								force
+								      .nodes(nodes)
+								      .links(edges)
+								      .start();
+
+								//Create groups for nodes & labels
+								var node_group = svg.selectAll("g.node_group")
+									.data(nodes)
+									.enter()
+									.append("g")
+									.attr("class","node_group");
+
+								//Add circle to each group, adjust attributes 
+								var node = node_group.append("circle")
+									.attr("class", "node")
+									.attr("r", 5)					//May want to adjust this - change size based on weight of node/pattern?
+									.style("fill", "steelblue")
+									.call(force.drag);				//Allows clicking & dragging of node
+
+								//Set attributes of edges
+								var link = svg.selectAll(".link")
+									.data(edges)
+									.enter().append("line")
+									.attr("class", "link")
+									.style("stroke-width", 1);
+
+								//Add label element to each group
+								var label = node_group.append("text")
+									.attr("dx", 12)
+									.attr("dy", ".35em")
+									//.style("visibility", "hidden")
+									.text(function (d) { return d.label});
+
+								//Set layout of nodes & edges
+								force.on("tick", function() {
+									link.attr("x1", function (d) {return d.source.x; })
+										.attr("y1", function (d) {return d.source.y; })
+										.attr("x2", function (d) {return d.target.x; })
+										.attr("y2", function (d) {return d.target.y; })
+
+									//node.attr("cx", function(d) { return d.x; })
+									//	.attr("cy", function(d) { return d.y; })
+
+									node_group.attr("transform", function(d) {
+										return "translate(" + [d.x , d.y] + ")";
+									});
+								})
+
+								/*For further exploration:
+									- Edge tapering (show direction) http://www.slideshare.net/OReillyStrata/visualizing-networks-beyond-the-hairball
+									- Edge bundling
+									- curved links
+									- Upon clicking a node, highlight the directly linked nodes & 2nd degree connections
+									- Slow down the 
+								*/
+
+							}
+						);
+					}
+				);
+			
+			</script>
+
+ 
       </section>
     </div>
 
