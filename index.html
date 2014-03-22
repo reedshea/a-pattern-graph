@@ -1,124 +1,68 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
 <html>
 
-<style>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="A Pattern Graph : Graph analysis of A Pattern Language" />
 
-.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-.link {
-  stroke: #999;
-  stroke-opacity: .6;
-}
+    <title>A Pattern Graph</title>
+  </head>
 
-</style>
+  <body>
 
-<body>
-	<h1>A Pattern Graph</h1>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/reedshea/a-pattern-graph">View on GitHub</a>
 
-	<script src="http://d3js.org/d3.v3.min.js"></script>
+          <h1 id="project_title">A Pattern Graph</h1>
+          <h2 id="project_tagline">Graph analysis of A Pattern Language</h2>
 
-	<script>
-		var width = 960,
-			height = 600;
-		
-		var svg = d3.select("body").append("svg")
-									.attr("width", width)
-									.attr("height", height)
-									.style("border", "1px solid black");
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/reedshea/a-pattern-graph/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/reedshea/a-pattern-graph/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-		//Set attributes of forced layout fxn
-		var force = d3.layout.force()
-				.charge(-10)		//May want to make this a fxn rather than constant?
-				.linkDistance(50)
-				.size([width, height]);
-		
-		var nodes;
-		var edges;
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a name="a-pattern-language" class="anchor" href="#a-pattern-language"><span class="octicon octicon-link"></span></a>A Pattern Language</h3>
 
-		//Load node data, parse CSV file
-		d3.csv("graph_data/nodes.csv", 
-			function(d) {
-				return {							
-		    		node_id: +d.Node,
-			    	label: d.Label,
-			    	weight: +d.Weight, 
-			    	type: d.Type
-			  	};
-			}, 
-			function(error, rows) {					
+<p>Christopher Alexander's 1977 <em>A Pattern Language</em> provided a sequence of vignettes, sketches, concepts - patterns for thinking about architecture and urban design. Each of the patterns builds upon and references others. In Alexander's words:</p>
 
-		  		nodes = rows;
-		  		
-		  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
-		  		//Load edge data, parse CSV file
-			  	d3.csv("graph_data/edges.csv", 
-			  		function(d) {
-						return {
-					    	source: +d.Source,
-					    	target: +d.Target,
-					    	"weight": 1,
-					    	type: d.Type, 
-				  		};
-					}, 
-					function(error, rows) {
-				  		edges = rows;
+<blockquote>
+<p>Since the language is in truth a network, there is no one sequence which perfectly captures it. But the sequence which follows, captures the broad sweep of the full network; in doing so, it follows a line, dips down, dips up again, and follows an irregular course, a little like a needle following a tapestry.</p>
+</blockquote>
 
-						console.log(nodes);
-						console.log(edges);
+<p>Through this project, I hope to provide a way to step back and view this tapestry as a whole. And learn a bit about d3.js along the way.</p>
+      </section>
+    </div>
 
-						force
-						      .nodes(nodes)
-						      .links(edges)
-						      .start();
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">A Pattern Graph maintained by <a href="https://github.com/reedshea">reedshea</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
 
-						//Set attributes of nodes
-						var node = svg.selectAll(".node")
-							.data(nodes)
-							.enter()
-							.append("circle")
-							.attr("class", "node")
-							.attr("r", 5)
-							.style("fill", "steelblue");
-
-						//Add text element
-						var text = svg.selectAll("text")
-							.data(nodes)
-							.enter()
-							.append("text");
-
-						//Set attributes of edges
-						var link = svg.selectAll(".link")
-							.data(edges)
-							.enter().append("line")
-							.attr("class", "link")
-							.style("stroke-width", 1)
-							.call(force.drag);
-
-						//Set layout of nodes & edges
-						force.on("tick", function() {
-							link.attr("x1", function (d) {return d.source.x; })
-								.attr("y1", function (d) {return d.source.y; })
-								.attr("x2", function (d) {return d.target.x; })
-								.attr("y2", function (d) {return d.target.y; })
-							node.attr("cx", function(d) { return d.x; })
-								.attr("cy", function(d) { return d.y; })
-						})
-
-					}
-				);
-			}
-		);
-		
-	
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-49237613-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
 
 
-
-
-
-	</script>
-
+  </body>
 </html>
