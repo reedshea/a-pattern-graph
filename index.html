@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<<<<<<< HEAD
 <style>
 
 .node {
@@ -22,116 +21,7 @@
 </style>
 
 <body>
-	<h1>A Pattern Graph</h1>
-
-	<script src="http://d3js.org/d3.v3.min.js"></script>
-
-	<script>
-		var width = 960,
-			height = 600;
-		
-		var svg = d3.select("body").append("svg")
-									.attr("width", width)
-									.attr("height", height)
-									.style("border", "1px solid black");
-
-		//Set attributes of forced layout fxn
-		var force = d3.layout.force()
-				.charge(-10)		//May want to make this a fxn rather than constant?
-				.linkDistance(50)
-				.size([width, height]);
-		
-		var nodes;
-		var edges;
-
-		//Load node data, parse CSV file
-		d3.csv("graph_data/nodes.csv", 
-			function(d) {
-				return {							
-		    		node_id: +d.Node,
-			    	label: d.Label,
-			    	weight: +d.Weight, 
-			    	type: d.Type
-			  	};
-			}, 
-			function(error, rows) {					
-
-		  		nodes = rows;
-		  		
-		  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
-		  		//Load edge data, parse CSV file
-			  	d3.csv("graph_data/edges.csv", 
-			  		function(d) {
-						return {
-					    	source: +d.Source,
-					    	target: +d.Target,
-					    	"weight": 1,
-					    	type: d.Type, 
-				  		};
-					}, 
-					function(error, rows) {
-				  		edges = rows;
-
-						console.log(nodes);
-						console.log(edges);
-
-						force
-						      .nodes(nodes)
-						      .links(edges)
-						      .start();
-
-						//Set attributes of nodes
-						var node = svg.selectAll(".node")
-							.data(nodes)
-							.enter()
-							.append("circle")
-							.attr("class", "node")
-							.attr("r", 5)
-							.style("fill", "steelblue");
-
-						//Add text element
-						node.append("text")
-					      	.attr("dx", 12)
-      						.attr("dy", ".35em")
-					      	.text("Label");		
-					      	//.text(function(d) {return d.Label });
-
-						//Set attributes of edges
-						var link = svg.selectAll(".link")
-							.data(edges)
-							.enter().append("line")
-							.attr("class", "link")
-							.style("stroke-width", 1)
-							.call(force.drag);
-
-						//Set layout of nodes & edges
-						force.on("tick", function() {
-							link.attr("x1", function (d) {return d.source.x; })
-								.attr("y1", function (d) {return d.source.y; })
-								.attr("x2", function (d) {return d.target.x; })
-								.attr("y2", function (d) {return d.target.y; })
-							node.attr("cx", function(d) { return d.x; })
-								.attr("cy", function(d) { return d.y; });
-						})
-
-						/*For further exploration:
-							- Edge tapering (show direction) http://www.slideshare.net/OReillyStrata/visualizing-networks-beyond-the-hairball
-							- Edge bundling
-							- curved links
-						*/
-
-					}
-				);
-			}
-		);
-		
 	
-
-
-
-
-
-	</script>
 
 =======
   <head>
@@ -154,16 +44,121 @@
           <h1 id="project_title">A Pattern Graph</h1>
           <h2 id="project_tagline">Graph analysis of A Pattern Language</h2>
 
-            <section id="downloads">
+<!--           <section id="downloads">
               <a class="zip_download_link" href="https://github.com/reedshea/a-pattern-graph/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/reedshea/a-pattern-graph/tarball/master">Download this project as a tar.gz file</a>
             </section>
+ -->        
         </header>
     </div>
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
+
+				<script src="http://d3js.org/d3.v3.min.js"></script>
+
+				<script>
+					var width = 960,
+						height = 600;
+					
+					var svg = d3.select("#main_content").append("svg")
+												.attr("width", width)
+												.attr("height", height)
+												.style("border", "1px solid black");
+
+					//Set attributes of forced layout fxn
+					var force = d3.layout.force()
+							.charge(-10)		//May want to make this a fxn rather than constant?
+							.linkDistance(50)
+							.size([width, height]);
+					
+					var nodes;
+					var edges;
+
+					//Load node data, parse CSV file
+					d3.csv("graph_data/nodes.csv", 
+						function(d) {
+							return {							
+					    		node_id: +d.Node,
+						    	label: d.Label,
+						    	weight: +d.Weight, 
+						    	type: d.Type
+						  	};
+						}, 
+						function(error, rows) {					
+
+					  		nodes = rows;
+					  		
+					  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
+					  		//Load edge data, parse CSV file
+						  	d3.csv("graph_data/edges.csv", 
+						  		function(d) {
+									return {
+								    	source: +d.Source,
+								    	target: +d.Target,
+								    	"weight": 1,
+								    	type: d.Type, 
+							  		};
+								}, 
+								function(error, rows) {
+							  		edges = rows;
+
+									console.log(nodes);
+									console.log(edges);
+
+									force
+									      .nodes(nodes)
+									      .links(edges)
+									      .start();
+
+									//Set attributes of nodes
+									var node = svg.selectAll(".node")
+										.data(nodes)
+										.enter()
+										.append("circle")
+										.attr("class", "node")
+										.attr("r", 5)
+										.style("fill", "steelblue");
+
+									//Add text element
+									node.append("text")
+								      	.attr("dx", 12)
+			      						.attr("dy", ".35em")
+								      	.text("Label");		
+								      	//.text(function(d) {return d.Label });
+
+									//Set attributes of edges
+									var link = svg.selectAll(".link")
+										.data(edges)
+										.enter().append("line")
+										.attr("class", "link")
+										.style("stroke-width", 1)
+										.call(force.drag);
+
+									//Set layout of nodes & edges
+									force.on("tick", function() {
+										link.attr("x1", function (d) {return d.source.x; })
+											.attr("y1", function (d) {return d.source.y; })
+											.attr("x2", function (d) {return d.target.x; })
+											.attr("y2", function (d) {return d.target.y; })
+										node.attr("cx", function(d) { return d.x; })
+											.attr("cy", function(d) { return d.y; });
+									})
+
+									/*For further exploration:
+										- Edge tapering (show direction) http://www.slideshare.net/OReillyStrata/visualizing-networks-beyond-the-hairball
+										- Edge bundling
+										- curved links
+									*/
+
+								}
+							);
+						}
+					);
+				
+				</script>
+
         <h3>
 <a name="a-pattern-language" class="anchor" href="#a-pattern-language"><span class="octicon octicon-link"></span></a>A Pattern Language</h3>
 
