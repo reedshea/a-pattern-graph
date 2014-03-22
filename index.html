@@ -21,17 +21,72 @@
 									.attr("height", height)
 									.style("border", "1px solid black");
 
+		//Set attributes of forced layout fxn
 		var force = d3.layout.force()
-				.nodes(nodes)
-				.links(links)
-				.size([width, height])
-				.start();
+				.charge(-100)		//May want to make this a fxn rather than constant?
+				.linkDistance(30)
+				.size([width, height]);
 		
+		var nodes;
+		var edges;
+
+		//Load node data, parse CSV file
+		d3.csv("graph_data/nodes.csv", 
+			function(d) {
+				return {							
+		    		node_id: +d.Node,
+			    	label: d.Label,
+			    	weight: +d.Weight, 
+			    	type: d.Type
+			  	};
+			}, 
+			function(error, rows) {					
+
+		  		nodes = rows;
+		  		
+		  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
+		  		//Load edge data, parse CSV file
+			  	d3.csv("graph_data/edges.csv", 
+			  		function(d) {
+						return {
+					    	source: +d.Source,
+					    	target: +d.Target,
+					    	"weight": 1,
+					    	type: d.Type, 
+				  		};
+					}, 
+					function(error, rows) {
+				  		edges = rows;
+
+						console.log(nodes);
+						console.log(edges);
+
+						force
+						      .nodes(nodes)
+						      .links(edges)
+						      .start();
+
+						var node = svg.selectAll(".node")
+							.data(nodes)
+							.enter().append("circle")
+							.attr("class", "node")
+							.attr("r", 3)
+							.style("fill", "steelblue")
+							.attr("cx", function(d) { return d.x; })
+							.attr("cy", function(d) { return d.y; });
+							
+							//call force.drag? 
+
+					}
+				);
+			}
+		);
+		
+	
 
 
-		d3.csv("graph_data/edges.csv",function(csv) {
- 
-		})
+
+
 
 	</script>
 
