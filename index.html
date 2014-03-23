@@ -8,9 +8,14 @@
   stroke-width: 1.5px;
 }
 
-.node text {
-  pointer-events: none;
-  font: 10px sans-serif;
+.node_group text {
+	display: inline;
+	pointer-events: none;
+	font: 12px sans-serif;
+}
+
+.node_group:hover text{
+	display: inline;
 }
 
 .link {
@@ -77,48 +82,58 @@
 				//Set attributes of forced layout fxn
 				var force = d3.layout.force()
 						.charge(-100)		//May want to make this a fxn rather than constant?
-						.linkDistance(100)
+						.linkDistance(200)
 						.size([width, height]);
 				
 				var nodes;
 				var edges;
 				
 
-				//Load node data, parse CSV file
-				d3.csv("graph_data/nodes.csv", 
-					function(d) {
-						return {							
-				    		node_id: +d.Node,
-					    	label: d.Label,
-					    	importance: +d.Weight, 
-					    	type: d.Type
-					  	};
-					}, 
-					function(error, rows) {					
-
-				  		nodes = rows;
 				  		
 				  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
 				  		//Load edge data, parse CSV file
-					  	d3.csv("graph_data/edges.csv", 
-					  		function(d) {
-								return {
-							    	source: +d.Source,
-							    	target: +d.Target,
-							    	//"weight": 1,
-							    	type: d.Type, 
-						  		};
-							}, 
-							function(error, rows) {
-						  		edges = rows;
+			  	d3.csv("graph_data/edges.csv", 
+			  		function(d) {
+						return {
+					    	source: +d.Source,
+					    	target: +d.Target,
+					    	//"weight": 1,
+					    	type: d.Type, 
+				  		};
+					}, 
 
-								console.log(nodes);
+					function(error, rows) {
+				  		edges = rows;
+
+						//Load node data, parse CSV file
+						d3.csv("graph_data/nodes.csv", 
+							function(d) {
+								return {							
+						    		node_id: +d.Node,
+							    	label: d.Label,
+							    	importance: +d.Weight, 
+							    	type: d.Type
+							  	};
+							}, 
+
+							function(error, rows) {					
+
+						  		nodes = rows;
+
 								console.log(edges);
+								console.log(nodes);
 
 								force
-								      .nodes(nodes)
 								      .links(edges)
+								      .nodes(nodes)
 								      .start();
+
+								//Set attributes of edges
+								var link = svg.selectAll(".link")
+									.data(edges)
+									.enter().append("line")
+									.attr("class", "link")
+									.style("stroke-width", 1);
 
 								//Create groups for nodes & labels
 								var node_group = svg.selectAll("g.node_group")
@@ -134,19 +149,12 @@
 									.style("fill", "steelblue")
 									.call(force.drag);				//Allows clicking & dragging of node
 
-								//Set attributes of edges
-								var link = svg.selectAll(".link")
-									.data(edges)
-									.enter().append("line")
-									.attr("class", "link")
-									.style("stroke-width", 1);
-
 								//Add label element to each group
 								var label = node_group.append("text")
 									.attr("dx", 12)
 									.attr("dy", ".35em")
-									//.style("visibility", "hidden")
-									.text(function (d) { return d.label});
+									.text(function (d) { return d.label})
+									.attr("display", "none");
 
 								//Set layout of nodes & edges
 								force.on("tick", function() {
@@ -161,6 +169,9 @@
 									node_group.attr("transform", function(d) {
 										return "translate(" + [d.x , d.y] + ")";
 									});
+
+
+
 								})
 
 								/*For further exploration:
