@@ -19,11 +19,12 @@
 	visibility: visible;
 }
 
+
+
 .link {
   stroke: #999;
-  opacity: .3;
+  stroke-opacity: .6;
 }
-
 
 </style>
 
@@ -99,7 +100,7 @@
 						return {
 					    	source: +d.Source,
 					    	target: +d.Target,
-					    	//weight: 1,
+					    	//"weight": 1,
 					    	type: d.Type, 
 				  		};
 					}, 
@@ -135,7 +136,7 @@
 									.data(edges)
 									.enter().append("line")
 									.attr("class", "link")
-									.style("stroke-width", 0.5);
+									.style("stroke-width", 1);
 
 								//Create groups for nodes & labels
 								var node_group = svg.selectAll("g.node_group")
@@ -147,7 +148,7 @@
 								//Add circle to each group, adjust attributes 
 								var node = node_group.append("circle")
 									.attr("class", "node")
-									.attr("r", 7)					//May want to adjust this - change size based on weight of node/pattern?
+									.attr("r", 5)					//May want to adjust this - change size based on weight of node/pattern?
 									.style("fill", "steelblue")
 									.call(force.drag);				//Allows clicking & dragging of node
 
