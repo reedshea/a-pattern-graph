@@ -90,16 +90,17 @@
 				
 				var nodes;
 				var edges;
-				
-
 				  		
-				  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
-				  		//Load edge data, parse CSV file
+				 //Asynchronous data collection requires (?) nesting 2nd data source within callback
+		 		//Load edge data, parse CSV file
+
+		 		//d3.js's force() function automatically creates nodes based on the zero index of links. 
+		 		//Therefore, it is necessary to decrement the "source" and "target" numbers by 1
 			  	d3.csv("graph_data/edges.csv", 
 			  		function(d) {
 						return {
-					    	source: +d.Source,
-					    	target: +d.Target,
+					    	source: +d.Source - 1,	//Adjust to have edge refer to the correct zero-indexed node
+					    	target: +d.Target - 1,
 					    	//"weight": 1,
 					    	type: d.Type, 
 				  		};
