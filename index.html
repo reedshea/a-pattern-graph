@@ -19,11 +19,12 @@
 	visibility: visible;
 }
 
+
+
 .link {
   stroke: #999;
-  opacity: .3;
+  stroke-opacity: .1;
 }
-
 
 </style>
 
@@ -89,16 +90,17 @@
 				
 				var nodes;
 				var edges;
-				
-
 				  		
-				  		//Asynchronous data collection requires (?) nesting 2nd data source within callback
-				  		//Load edge data, parse CSV file
+				 //Asynchronous data collection requires (?) nesting 2nd data source within callback
+		 		//Load edge data, parse CSV file
+
+		 		//d3.js's force() function automatically creates nodes based on the zero index of links. 
+		 		//Therefore, it is necessary to decrement the "source" and "target" numbers by 1
 			  	d3.csv("graph_data/edges.csv", 
 			  		function(d) {
 						return {
-					    	source: +d.Source,
-					    	target: +d.Target,
+					    	source: +d.Source - 1,	//Adjust to have edge refer to the correct zero-indexed node
+					    	target: +d.Target - 1,
 					    	//"weight": 1,
 					    	type: d.Type, 
 				  		};
@@ -135,7 +137,7 @@
 									.data(edges)
 									.enter().append("line")
 									.attr("class", "link")
-									.style("stroke-width", 0.5);
+									.style("stroke-width", 1);
 
 								//Create groups for nodes & labels
 								var node_group = svg.selectAll("g.node_group")
@@ -147,7 +149,9 @@
 								//Add circle to each group, adjust attributes 
 								var node = node_group.append("circle")
 									.attr("class", "node")
-									.attr("r", 7)					//May want to adjust this - change size based on weight of node/pattern?
+									.attr("r", function(d) {
+										return (d.importance * 1.5) + 5;				//Adjust radius based on "importance" attribute (C. Alexander's rating of the "success" of each pattern, from 0-2)
+									})							
 									.style("fill", "steelblue")
 									.call(force.drag);				//Allows clicking & dragging of node
 
@@ -184,7 +188,8 @@
 									- Edge bundling
 									- curved links
 									- Upon clicking a node, highlight the directly linked nodes & 2nd degree connections
-									- Slow down the 
+									- Slow down the animations on click
+									- 
 								*/
 
 							}
