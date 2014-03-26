@@ -23,7 +23,7 @@
 
 .link {
   stroke: #999;
-  stroke-opacity: .6;
+  stroke-opacity: .1;
 }
 
 </style>
@@ -149,7 +149,9 @@
 								//Add circle to each group, adjust attributes 
 								var node = node_group.append("circle")
 									.attr("class", "node")
-									.attr("r", 5)					//May want to adjust this - change size based on weight of node/pattern?
+									.attr("r", function(d) {
+										return (d.importance * 1.5) + 5;				//Adjust radius based on "importance" attribute (C. Alexander's rating of the "success" of each pattern, from 0-2)
+									})							
 									.style("fill", "steelblue")
 									.call(force.drag);				//Allows clicking & dragging of node
 
@@ -186,7 +188,8 @@
 									- Edge bundling
 									- curved links
 									- Upon clicking a node, highlight the directly linked nodes & 2nd degree connections
-									- Slow down the 
+									- Slow down the animations on click
+									- 
 								*/
 
 							}
