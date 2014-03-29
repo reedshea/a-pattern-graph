@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.node_group text {
+	visibility: visible;
+	pointer-events: none;
+	font: 12px sans-serif;
+}
+
+
+.node_group:hover text{
+	visibility: visible;
+}
+
+
+
+.link {
+  stroke: #999;
+  stroke-opacity: .1;
+}
+
+</style>
+
+<body>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="A Pattern Graph : Graph analysis of A Pattern Language" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>A Pattern Graph</title>
+  </head>
+
+<body>
+<div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+var width = 940,
+	height = 820;
+
+
+var svg = d3.select("#main_content").append("svg")
+							.attr("width", width)
+							.attr("height", height)
+							.style("border", "1px solid black");
+
+//Set attributes of forced layout fxn
+var force = d3.layout.force()
+		.charge(-100)		//May want to make this a fxn rather than constant?
+		.linkDistance(200)
+		//.gravity(0)
+		.size([width, height]);
+
+
+var color = d3.scale.ordinal()
+    				.domain(["Towns", "Buildings", "Construction"])
+    				.range(["steelblue","darkseagreen","orangered"]);
+
+var foci = d3.scale.ordinal()
+    				.domain(["Towns", "Buildings", "Construction"])
+    				.range([{x: 150, y: 150},{x: 350, y: 350},{x: 550, y: 550}]);
+
+var edges;
+  		
+ //Asynchronous data collection requires (?) nesting 2nd data source within callback
+	//Load edge data, parse CSV file
+
+//d3.js's force() function automatically creates nodes based on the zero index of links. 
+//Therefore, it is necessary to decrement the "source" and "target" numbers by 1
+d3.csv("graph_data/edges.csv", 
+	function(d) {
+	return {
+    	source: +d.Source - 1,	//Adjust to have edge refer to the correct zero-indexed node
+    	target: +d.Target - 1,
+    	//"weight": 1,
+    	type: d.Type, 
+		};
+}, 
+
+	function(error, rows) {
+			edges = rows;
+
+		//Load node data, parse CSV file
+		d3.csv("graph_data/nodes.csv", 
+			function(d) {
+				return {							
+		    		node_id: +d.Node,
+			    	label: d.Label,
+			    	importance: +d.Weight, 
+			    	type: d.Type,
+			    	focus_id: d.Focus
+			  	};
+			}, 
+
+			function(error, rows) {					
+
+		  		nodes = rows;
+
+				console.log(edges);
+				console.log(nodes);
+
+				force
+				      .links(edges)
+				      .nodes(nodes)
+				      .start();
+
+				//Set attributes of edges
+				var link = svg.selectAll(".link")
+					.data(edges)
+					.enter().append("line")
+					.attr("class", "link")
+					.style("stroke-width", 1);
+
+				//Create groups for nodes & labels
+				var node_group = svg.selectAll("g.node_group")
+					.data(nodes)
+					.enter()
+					.append("g")
+					.attr("class","node_group");
+
+				//Add circle to each group, adjust attributes 
+				var node = node_group.append("circle")
+					.attr("class", "node")
+					.attr("r", function(d) {
+						return (d.importance * 1.5) + 5;				//Adjust radius based on "importance" attribute (C. Alexander's rating of the "success" of each pattern, from 0-2)
+					})							
+					.attr("fill", function(d) {return color(d.type); })
+					.call(force.drag);				//Allows clicking & dragging of node
+
+				//Add label element to each group
+				var label = node_group.append("text")
+					.attr("dx", 12)
+					.attr("dy", ".35em")
+					.text(function (d) { return d.label + d.focus_id})
+					//.on("mouseover",function(){
+						//	var sel = d3.select(this);
+						//	sel.moveToFront();
+					;
+
+				//var force_with_labels = d3.layout.force()
+				//	.nodes(nodes)
+				//	.linkDistance(200)
+				//	.start();
+
+				var updateNode = function() {}
+
+
+				//Set layout of nodes & edges
+				force.on("tick", function() {
+
+				//	link.attr("x1", function (d) {return d.source.x; })
+				//		.attr("y1", function (d) {return d.source.y; })
+				//		.attr("x2", function (d) {return d.target.x; })
+				//		.attr("y2", function (d) {return d.target.y; })
+
+					node_group.attr("transform", function(d) {
+						return "translate(" + [d.x , d.y] + ")";
+					//force_with_labels.start();
+
+					});
+
+
+
+				})
+
+				/*For further exploration:
+					- Edge tapering (show direction) http://www.slideshare.net/OReillyStrata/visualizing-networks-beyond-the-hairball
+					- Edge bundling
+					- curved links
+					- Upon clicking a node, highlight the directly linked nodes & 2nd degree connections
+					- Slow down the animations on click
+					- 
+				*/
+
+			}
+		);
+	}	
+);
+
+</script>
+
+      </section>
+    </div>
+</body>
+
+</html>
