@@ -9,7 +9,7 @@
 }
 
 .node_group text {
-	visibility: visible;
+	visibility: hidden;
 	pointer-events: none;
 	font: 12px sans-serif;
 }
@@ -101,7 +101,9 @@ d3.csv("graph_data/edges.csv",
 			    	label: d.Label,
 			    	importance: +d.Weight, 
 			    	type: d.Type,
-			    	focus_id: d.Focus
+			    	focus_id: d.Focus,
+			    	betweenness_centrality: d.Betweenness_Centrality,
+			    	degre: d.Degree
 			  	};
 			}, 
 
@@ -161,18 +163,25 @@ d3.csv("graph_data/edges.csv",
 
 
 				//Set layout of nodes & edges
-				force.on("tick", function() {
+				//force.on("tick", function() {
 
 				//	link.attr("x1", function (d) {return d.source.x; })
 				//		.attr("y1", function (d) {return d.source.y; })
 				//		.attr("x2", function (d) {return d.target.x; })
 				//		.attr("y2", function (d) {return d.target.y; })
 
-					node_group.attr("transform", function(d) {
+					//node_group.attr("transform", function(d) {
 						return "translate(" + [d.x , d.y] + ")";
 					//force_with_labels.start();
 
-					});
+					//});
+				
+				var svg.selectAll("circle")
+				.data(nodes)
+				.enter()
+				.append("circle")
+				.attr("cx", function(d) {return d.betweenness_centrality})
+				.attr("cy", function(d) {return d.degree})
 
 
 
